@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "mcp-backend": {
+      "type": "stdio",
+      "command": "pnpm",
+      "args": ["--dir", "/absolute/path/to/mcp-backend", "start"],
+      "env": {}
+    }
+  }
+}
