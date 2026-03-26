@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/PostgreSQL-direct-blue?style=for-the-badge" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/Supabase-storage-green?style=for-the-badge" alt="Supabase" />
   <img src="https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge" alt="In Development" />
-  <img src="https://img.shields.io/badge/Tools-20-blue?style=for-the-badge" alt="20 Tools" />
+  <img src="https://img.shields.io/badge/Tools-17-blue?style=for-the-badge" alt="17 Tools" />
 </p>
 
 > ⚠️ **Active Development** — APIs and tools may change without prior notice. Use tagged releases (`vX.Y.Z`) for stability.
