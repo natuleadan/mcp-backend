@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/PostgreSQL-direct-blue?style=for-the-badge" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/Supabase-storage-green?style=for-the-badge" alt="Supabase" />
   <img src="https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge" alt="In Development" />
-  <img src="https://img.shields.io/badge/Tools-17-blue?style=for-the-badge" alt="17 Tools" />
+  <img src="https://img.shields.io/badge/Tools-28-blue?style=for-the-badge" alt="28 Tools" />
 </p>
 
 > ⚠️ **Active Development** — APIs and tools may change without prior notice. Use tagged releases (`vX.Y.Z`) for stability.
@@ -29,18 +29,18 @@ Local MCP server compatible with any studio-based AI client. Provides direct Pos
 
 ---
 
-## Tools
+## Tools (28 Total)
 
-### Database
+### Database (4)
 
 | Tool | Description |
 |------|-------------|
 | `query_db` | Run SELECT queries on PostgreSQL |
-| `execute_sql` | Execute arbitrary SQL (INSERT/UPDATE/DELETE) |
-| `execute_rls_sql` | Execute SQL with RLS context (impersonate user) |
+| `execute_sql` | Execute arbitrary SQL (INSERT/UPDATE/DELETE) with transaction support |
+| `execute_rls_sql` | Execute SQL with RLS context (impersonate user role) |
 | `list_tables` | List all public tables |
 
-### Seeds
+### Seeds (4)
 
 | Tool | Description |
 |------|-------------|
@@ -49,37 +49,55 @@ Local MCP server compatible with any studio-based AI client. Provides direct Pos
 | `run_data_seed` | Run data seed files (users, products, courses, articles) |
 | `run_all_seeds` | Run base + data seeds in order |
 
-### Storage
+### Storage (8)
 
 | Tool | Description |
 |------|-------------|
 | `list_buckets` | List all Supabase storage buckets |
-| `list_files` | List files in a bucket |
-| `get_signed_url` | Generate a signed URL for a file |
-| `get_public_url` | Get the public URL for a file |
-| `upload_file` | Upload a file to a bucket |
+| `list_files` | List files in a bucket with pagination |
+| `get_signed_url` | Generate a signed URL for a file (private buckets) |
+| `get_public_url` | Get the public URL for a file (public buckets) |
+| `upload_file` | Upload a file to a bucket with MIME type detection |
 | `delete_file` | Delete a file from a bucket |
-| `sync_bucket` | Sync local folder to a bucket |
+| `sync_bucket` | Sync local folder to/from a bucket recursively |
+| `bulk_upload_files` | Upload multiple files with progress tracking |
 
-### Iceberg
+### Iceberg (3)
 
 | Tool | Description |
 |------|-------------|
 | `list_iceberg_tables` | List foreign tables in the `iceberg` schema (via FDW) |
-| `query_iceberg` | SELECT from an Iceberg foreign table via Postgres FDW |
+| `query_iceberg` | SELECT from an Iceberg foreign table via Postgres FDW with filters |
 | `list_iceberg_catalog_tables` | List tables from the Iceberg REST Catalog directly |
 
-### RPC
+### RPC (1)
 
 | Tool | Description |
 |------|-------------|
-| `call_rpc` | Call a PostgreSQL RPC function |
+| `call_rpc` | Call a PostgreSQL RPC function with named arguments |
 
-### Bootstrap
+### Bootstrap (1)
 
 | Tool | Description |
 |------|-------------|
 | `bootstrap_iceberg` | Bootstrap Iceberg schema and foreign data wrapper |
+
+### Schema & Query Analysis (4)
+
+| Tool | Description |
+|------|-------------|
+| `table_info` | Describe table schema (columns, types, constraints, indexes) |
+| `column_stats` | Get column statistics (cardinality, NULL%, data distribution) |
+| `validate_sql` | Parse SQL without executing to catch syntax errors |
+| `query_with_explain` | Run query with EXPLAIN ANALYZE for performance debugging |
+
+### Observability (3)
+
+| Tool | Description |
+|------|-------------|
+| `active_queries` | List long-running queries with duration and state |
+| `database_stats` | Table sizes, row counts, and growth metrics |
+| `index_info` | List indexes with size, scan count, and usage stats |
 
 ---
 

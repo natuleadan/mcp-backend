@@ -1,47 +1,71 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
-import { seedTools } from './tools/seed.tools.js'
-import { queryTools } from './tools/query.tools.js'
-import { executeTools } from './tools/execute.tools.js'
-import { storageTools } from './tools/storage.tools.js'
-import { rpcTools } from './tools/rpc.tools.js'
-import { icebergTools } from './tools/iceberg.tools.js'
-import { bootstrapTools } from './tools/bootstrap.tools.js'
+import { registerRunBaseSeedTool } from './tools/run-base-seed.tools.js'
+import { registerRunDataSeedTool } from './tools/run-data-seed.tools.js'
+import { registerRunAllSeedsTool } from './tools/run-all-seeds.tools.js'
+import { registerListSeedFilesTool } from './tools/list-seed-files.tools.js'
+import { registerQueryDbTool } from './tools/query-db.tools.js'
+import { registerListTablesTool } from './tools/list-tables.tools.js'
+import { registerExecuteSqlTool } from './tools/execute-sql.tools.js'
+import { registerExecuteRlsSqlTool } from './tools/execute-rls-sql.tools.js'
+import { registerListBucketsTool } from './tools/list-buckets.tools.js'
+import { registerListFilesTool } from './tools/list-files.tools.js'
+import { registerUploadFileTool } from './tools/upload-file.tools.js'
+import { registerDeleteFileTool } from './tools/delete-file.tools.js'
+import { registerGetSignedUrlTool } from './tools/get-signed-url.tools.js'
+import { registerGetPublicUrlTool } from './tools/get-public-url.tools.js'
+import { registerSyncBucketTool } from './tools/sync-bucket.tools.js'
+import { registerListIcebergTablesTool } from './tools/list-iceberg-tables.tools.js'
+import { registerQueryIcebergTool } from './tools/query-iceberg.tools.js'
+import { registerListIcebergCatalogTablesTool } from './tools/list-iceberg-catalog-tables.tools.js'
+import { registerBootstrapIcebergTool } from './tools/bootstrap-iceberg.tools.js'
+import { registerTableInfoTool } from './tools/table-info.tools.js'
+import { registerColumnStatsTool } from './tools/column-stats.tools.js'
+import { registerValidateSqlTool } from './tools/validate-sql.tools.js'
+import { registerQueryWithExplainTool } from './tools/query-with-explain.tools.js'
+import { registerActiveQueriesTool } from './tools/active-queries.tools.js'
+import { registerDatabaseStatsTool } from './tools/database-stats.tools.js'
+import { registerIndexInfoTool } from './tools/index-info.tools.js'
+import { registerBulkUploadFilesTool } from './tools/bulk-upload-files.tools.js'
+import { registerCallRpcTool } from './tools/call-rpc.tools.js'
 
 const server = new McpServer({
   name: 'mcp-backend',
   version: '1.0.0',
 })
 
-const allTools = [
-  ...seedTools,
-  ...queryTools,
-  ...executeTools,
-  ...storageTools,
-  ...rpcTools,
-  ...icebergTools,
-  ...bootstrapTools,
-]
+// Register refactored legacy tools (function-based)
+registerRunBaseSeedTool(server)
+registerRunDataSeedTool(server)
+registerRunAllSeedsTool(server)
+registerListSeedFilesTool(server)
+registerQueryDbTool(server)
+registerListTablesTool(server)
+registerExecuteSqlTool(server)
+registerExecuteRlsSqlTool(server)
+registerListBucketsTool(server)
+registerListFilesTool(server)
+registerUploadFileTool(server)
+registerDeleteFileTool(server)
+registerGetSignedUrlTool(server)
+registerGetPublicUrlTool(server)
+registerSyncBucketTool(server)
+registerListIcebergTablesTool(server)
+registerQueryIcebergTool(server)
+registerListIcebergCatalogTablesTool(server)
+registerBootstrapIcebergTool(server)
 
-for (const tool of allTools) {
-  server.tool(tool.name, tool.description, tool.inputSchema.shape, async (args) => {
-    try {
-      const result = await tool.handler(args as never)
-      return { content: [{ type: 'text' as const, text: String(result) }] }
-    } catch (err) {
-      return {
-        content: [
-          {
-            type: 'text' as const,
-            text: `❌ Error: ${err instanceof Error ? err.message : String(err)}`,
-          },
-        ],
-        isError: true,
-      }
-    }
-  })
-}
+// Register new tools (function-based)
+registerTableInfoTool(server)
+registerColumnStatsTool(server)
+registerValidateSqlTool(server)
+registerQueryWithExplainTool(server)
+registerActiveQueriesTool(server)
+registerDatabaseStatsTool(server)
+registerIndexInfoTool(server)
+registerBulkUploadFilesTool(server)
+registerCallRpcTool(server)
 
 const transport = new StdioServerTransport()
 await server.connect(transport)
-console.error('mcp-backend running on stdio')
+console.error('mcp-backend running with 28 tools (20 legacy + 8 new)')
