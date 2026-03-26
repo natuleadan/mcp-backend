@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1](https://github.com/natuleadan/mcp-backend/compare/v1.1.0...v1.1.1) (2026-03-26)
+
+### 🐛 Bug Fixes
+
+* **setup:** pass warehouse param to iceberg config endpoint ([4ef2fdb](https://github.com/natuleadan/mcp-backend/commit/4ef2fdb34cad655cded73f0eb16ab70b00a2c5d5))
+
+### 🔧 Chore
+
+* **config:** rename iceberg_token to catalog_token ([b6d89fd](https://github.com/natuleadan/mcp-backend/commit/b6d89fd6f86d9499a355d9850b27a1243127a7c9))
+
 ## [1.1.0](https://github.com/natuleadan/mcp-backend/compare/v1.0.0...v1.1.0) (2026-03-26)
 
 ### ✨ Features
