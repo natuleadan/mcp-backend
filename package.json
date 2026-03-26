@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "bootstrap": "tsx scripts/bootstrap.ts",
     "dev": "tsx src/index.ts",
     "build": "tsc",
     "start": "tsx src/index.ts",
