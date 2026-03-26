@@ -129,13 +129,14 @@ async function checkSupabase(url: string, key: string): Promise<void> {
   }
 }
 
-async function checkIceberg(catalogUri: string, token: string): Promise<void> {
+async function checkIceberg(catalogUri: string, token: string, warehouse: string): Promise<void> {
   if (!catalogUri || !token) {
     warn('Iceberg not configured — skipping (optional)')
     return
   }
   try {
-    const res = await fetch(`${catalogUri}/v1/config`, {
+    const url = `${catalogUri}/v1/config${warehouse ? `?warehouse=${encodeURIComponent(warehouse)}` : ''}`
+    const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
       signal: AbortSignal.timeout(5000),
     })
@@ -207,7 +208,7 @@ async function main() {
   section('Testing connections')
   await checkPostgres(vars.POSTGRES_URL)
   await checkSupabase(vars.SUPABASE_URL, vars.SUPABASE_SECRET_KEY)
-  await checkIceberg(vars.CATALOG_URI ?? '', vars.CATALOG_TOKEN ?? '')
+  await checkIceberg(vars.CATALOG_URI ?? '', vars.CATALOG_TOKEN ?? '', vars.ICEBERG_WAREHOUSE ?? '')
 
   log('🎉 Bootstrap complete.\n   pnpm start     → start the MCP server\n   pnpm db:all    → run DB migrations')
 }
