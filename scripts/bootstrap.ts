@@ -94,7 +94,7 @@ function serializeEnv(vars: Record<string, string>): string {
     `S3_ENDPOINT=${vars.S3_ENDPOINT ?? ''}`,
     `ICEBERG_WAREHOUSE=${vars.ICEBERG_WAREHOUSE ?? 'nla-audit-lake'}`,
     `ICEBERG_NAMESPACE=${vars.ICEBERG_NAMESPACE ?? 'audit'}`,
-    `ICEBERG_TOKEN=${vars.ICEBERG_TOKEN ?? ''}`,
+    `CATALOG_TOKEN=${vars.CATALOG_TOKEN ?? ''}`,
   ].join('\n') + '\n'
 }
 
@@ -181,7 +181,7 @@ async function main() {
     vars.S3_ENDPOINT = await prompt(rl, 'S3_ENDPOINT')
     vars.ICEBERG_WAREHOUSE = await prompt(rl, 'ICEBERG_WAREHOUSE', 'nla-audit-lake')
     vars.ICEBERG_NAMESPACE = await prompt(rl, 'ICEBERG_NAMESPACE', 'audit')
-    vars.ICEBERG_TOKEN = await prompt(rl, 'ICEBERG_TOKEN (same as SUPABASE_SECRET_KEY if using Supabase)')
+    vars.CATALOG_TOKEN = await prompt(rl, 'CATALOG_TOKEN (same as SUPABASE_SECRET_KEY if using Supabase)')
 
     rl.close()
 
@@ -207,7 +207,7 @@ async function main() {
   section('Testing connections')
   await checkPostgres(vars.POSTGRES_URL)
   await checkSupabase(vars.SUPABASE_URL, vars.SUPABASE_SECRET_KEY)
-  await checkIceberg(vars.CATALOG_URI ?? '', vars.ICEBERG_TOKEN ?? '')
+  await checkIceberg(vars.CATALOG_URI ?? '', vars.CATALOG_TOKEN ?? '')
 
   log('🎉 Bootstrap complete.\n   pnpm start     → start the MCP server\n   pnpm db:all    → run DB migrations')
 }

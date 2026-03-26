@@ -15,7 +15,7 @@ export const config = {
   supabaseUrl: process.env.SUPABASE_URL || "",
   supabasePublishableKey: process.env.SUPABASE_PUBLISHABLE_KEY || "",
   supabaseSecretKey: process.env.SUPABASE_SECRET_KEY || "",
-  icebergToken: process.env.ICEBERG_TOKEN || process.env.SUPABASE_SERVICE_ROLE_JWT || "",
+  icebergToken: process.env.CATALOG_TOKEN || process.env.ICEBERG_TOKEN || process.env.SUPABASE_SERVICE_ROLE_JWT || "",
   // Iceberg / Data Lake
   catalogUri: process.env.CATALOG_URI || "",
   awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
