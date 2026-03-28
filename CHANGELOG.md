@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0](https://github.com/natuleadan/mcp-backend/compare/v1.1.2...v1.2.0) (2026-03-28)
+
+### ✨ Features
+
+* **db:** add execute_sql_file tool for multi-statement sql scripts ([866fced](https://github.com/natuleadan/mcp-backend/commit/866fced5bc36f52091e9c491248d64a235a9163c))
+
+### 🔧 Chore
+
+* **db:** register execute_sql_file tool implementation ([770481e](https://github.com/natuleadan/mcp-backend/commit/770481e134d133be56ba6eea3e77f56448ca1e70))
+* **husky:** add git hooks for commitlint validation ([5e6a4d9](https://github.com/natuleadan/mcp-backend/commit/5e6a4d965ebe684e80f7dbabed65d6c592461e33))
+* **husky:** standardize commit-msg hook format with fullstack ([01a0822](https://github.com/natuleadan/mcp-backend/commit/01a0822347443890efe805a4f1a947ef47e54945))
+
 ## [1.1.2](https://github.com/natuleadan/mcp-backend/compare/v1.1.1...v1.1.2) (2026-03-26)
 
 ### 🐛 Bug Fixes
