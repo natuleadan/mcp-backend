@@ -29,6 +29,7 @@ import { registerIndexInfoTool } from './tools/index-info.tools.js'
 import { registerBulkUploadFilesTool } from './tools/bulk-upload-files.tools.js'
 import { registerCallRpcTool } from './tools/call-rpc.tools.js'
 import { registerExecuteSqlFileTool } from './tools/execute-sql-file.tools.js'
+import { registerGenerateAndUpdateSignedUrlTool } from './tools/generate-and-update-signed-url.tools.js'
 
 const server = new McpServer({
   name: 'mcp-backend',
@@ -67,7 +68,8 @@ registerIndexInfoTool(server)
 registerBulkUploadFilesTool(server)
 registerCallRpcTool(server)
 registerExecuteSqlFileTool(server)
+registerGenerateAndUpdateSignedUrlTool(server)
 
 const transport = new StdioServerTransport()
 await server.connect(transport)
-console.error('mcp-backend running with 29 tools (20 legacy + 9 new)')
+console.error('mcp-backend running with 30 tools (20 legacy + 10 new)')
