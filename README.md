@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/PostgreSQL-direct-blue?style=for-the-badge" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/Supabase-storage-green?style=for-the-badge" alt="Supabase" />
   <img src="https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge" alt="In Development" />
-  <img src="https://img.shields.io/badge/Tools-28-blue?style=for-the-badge" alt="28 Tools" />
+  <img src="https://img.shields.io/badge/Tools-29-blue?style=for-the-badge" alt="29 Tools" />
 </p>
 
 > ⚠️ **Active Development** — APIs and tools may change without prior notice. Use tagged releases (`vX.Y.Z`) for stability.
@@ -29,14 +29,15 @@ Local MCP server compatible with any studio-based AI client. Provides direct Pos
 
 ---
 
-## Tools (28 Total)
+## Tools (29 Total)
 
-### Database (4)
+### Database (5)
 
 | Tool | Description |
 |------|-------------|
 | `query_db` | Run SELECT queries on PostgreSQL |
 | `execute_sql` | Execute arbitrary SQL (INSERT/UPDATE/DELETE) with transaction support |
+| `execute_sql_file` | Execute SQL file content (PL/pgSQL blocks, multi-statement scripts) with transaction support |
 | `execute_rls_sql` | Execute SQL with RLS context (impersonate user role) |
 | `list_tables` | List all public tables |
 

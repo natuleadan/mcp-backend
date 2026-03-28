@@ -28,6 +28,7 @@ import { registerDatabaseStatsTool } from './tools/database-stats.tools.js'
 import { registerIndexInfoTool } from './tools/index-info.tools.js'
 import { registerBulkUploadFilesTool } from './tools/bulk-upload-files.tools.js'
 import { registerCallRpcTool } from './tools/call-rpc.tools.js'
+import { registerExecuteSqlFileTool } from './tools/execute-sql-file.tools.js'
 
 const server = new McpServer({
   name: 'mcp-backend',
@@ -65,7 +66,8 @@ registerDatabaseStatsTool(server)
 registerIndexInfoTool(server)
 registerBulkUploadFilesTool(server)
 registerCallRpcTool(server)
+registerExecuteSqlFileTool(server)
 
 const transport = new StdioServerTransport()
 await server.connect(transport)
-console.error('mcp-backend running with 28 tools (20 legacy + 8 new)')
+console.error('mcp-backend running with 29 tools (20 legacy + 9 new)')
