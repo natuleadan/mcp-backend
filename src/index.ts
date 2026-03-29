@@ -14,7 +14,7 @@ import { registerUploadFileTool } from './tools/upload-file.tools.js'
 import { registerDeleteFileTool } from './tools/delete-file.tools.js'
 import { registerGetSignedUrlTool } from './tools/get-signed-url.tools.js'
 import { registerGetPublicUrlTool } from './tools/get-public-url.tools.js'
-import { registerSyncBucketTool } from './tools/sync-bucket.tools.js'
+import { registerDownloadBucketTool } from './tools/download-bucket.tools.js'
 import { registerListIcebergTablesTool } from './tools/list-iceberg-tables.tools.js'
 import { registerQueryIcebergTool } from './tools/query-iceberg.tools.js'
 import { registerListIcebergCatalogTablesTool } from './tools/list-iceberg-catalog-tables.tools.js'
@@ -51,7 +51,7 @@ registerUploadFileTool(server)
 registerDeleteFileTool(server)
 registerGetSignedUrlTool(server)
 registerGetPublicUrlTool(server)
-registerSyncBucketTool(server)
+registerDownloadBucketTool(server)
 registerListIcebergTablesTool(server)
 registerQueryIcebergTool(server)
 registerListIcebergCatalogTablesTool(server)

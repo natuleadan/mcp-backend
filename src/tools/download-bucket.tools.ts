@@ -5,16 +5,16 @@ import { config } from '../config.js'
 import fs from 'node:fs'
 import path from 'node:path'
 
-export function registerSyncBucketTool(server: McpServer) {
+export function registerDownloadBucketTool(server: McpServer) {
   server.tool(
-    'sync_bucket',
-    'Download files from Supabase storage to local buckets/ folder. Can sync all buckets, one bucket, a specific folder, or a single file.',
+    'download_bucket',
+    'Download files from Supabase storage to local buckets/ folder. Can download all buckets, one bucket, a specific folder, or a single file.',
     z.object({
-      bucket: z.string().optional().describe('Bucket to sync — omit to sync ALL buckets'),
+      bucket: z.string().optional().describe('Bucket to download — omit to download ALL buckets'),
       folder: z
         .string()
         .optional()
-        .describe("Folder path to sync (e.g. 'branding/logos') — requires bucket"),
+        .describe("Folder path to download (e.g. 'branding/logos') — requires bucket"),
       file: z
         .string()
         .optional()
@@ -49,7 +49,7 @@ export function registerSyncBucketTool(server: McpServer) {
           results.push(`✅ ${bkt}/${filePath}`)
         }
 
-        async function syncFolder(bkt: string, folderPath: string) {
+        async function downloadFolder(bkt: string, folderPath: string) {
           const { data, error } = await supabase.storage.from(bkt).list(folderPath, { limit })
           if (error) {
             results.push(`❌ list ${bkt}/${folderPath}: ${error.message}`)
@@ -58,7 +58,7 @@ export function registerSyncBucketTool(server: McpServer) {
           for (const item of data ?? []) {
             const itemPath = folderPath ? `${folderPath}/${item.name}` : item.name
             if (item.id === null) {
-              await syncFolder(bkt, itemPath) // it's a folder
+              await downloadFolder(bkt, itemPath) // it's a folder
             } else {
               await downloadFile(bkt, itemPath)
             }
@@ -68,7 +68,7 @@ export function registerSyncBucketTool(server: McpServer) {
         if (file && bucket) {
           await downloadFile(bucket, file)
         } else if (bucket) {
-          await syncFolder(bucket, folder ?? '')
+          await downloadFolder(bucket, folder ?? '')
         } else {
           const { data: buckets, error } = await supabase.storage.listBuckets()
           if (error) {
@@ -78,7 +78,7 @@ export function registerSyncBucketTool(server: McpServer) {
             }
           }
           for (const b of buckets ?? []) {
-            await syncFolder(b.id, '')
+            await downloadFolder(b.id, '')
           }
         }
 
@@ -86,7 +86,7 @@ export function registerSyncBucketTool(server: McpServer) {
           content: [
             {
               type: 'text',
-              text: `Sync complete (${results.length} files):\n${results.join('\n')}`,
+              text: `Download complete (${results.length} files):\n${results.join('\n')}`,
             },
           ],
         }
