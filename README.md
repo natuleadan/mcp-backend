@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/PostgreSQL-direct-blue?style=for-the-badge" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/Supabase-storage-green?style=for-the-badge" alt="Supabase" />
   <img src="https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge" alt="In Development" />
-  <img src="https://img.shields.io/badge/Tools-30-blue?style=for-the-badge" alt="30 Tools" />
+  <img src="https://img.shields.io/badge/Tools-31-blue?style=for-the-badge" alt="31 Tools" />
 </p>
 
 > ⚠️ **Active Development** — APIs and tools may change without prior notice. Use tagged releases (`vX.Y.Z`) for stability.
@@ -29,7 +29,7 @@ Local MCP server compatible with any studio-based AI client. Provides direct Pos
 
 ---
 
-## Tools (30 Total)
+## Tools (31 Total)
 
 ### Database (5)
 
@@ -50,7 +50,7 @@ Local MCP server compatible with any studio-based AI client. Provides direct Pos
 | `run_data_seed` | Run data seed files (users, products, courses, articles) |
 | `run_all_seeds` | Run base + data seeds in order |
 
-### Storage (9)
+### Storage (10)
 
 | Tool | Description |
 |------|-------------|
@@ -60,8 +60,8 @@ Local MCP server compatible with any studio-based AI client. Provides direct Pos
 | `get_public_url` | Get the public URL for a file (public buckets) |
 | `upload_file` | Upload a file to a bucket with MIME type detection |
 | `delete_file` | Delete a file from a bucket |
-| `sync_bucket` | Sync local folder to/from a bucket recursively |
-| `bulk_upload_files` | Upload multiple files with progress tracking |
+| `download_bucket` | Download files from Supabase storage to local buckets/ folder (all buckets, one bucket, specific folder, or single file) |
+| `bulk_upload_files` | Upload multiple files or entire folder with selective file extension filtering (e.g., ignore `.sql`, `.tmp`) and optional storage prefix |
 | `generate_and_update_signed_url` | Generate signed URL and atomically update DB table with URL + expiration timestamp |
 
 ### Iceberg (3)
