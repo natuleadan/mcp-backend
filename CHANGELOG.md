@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0](https://github.com/natuleadan/mcp-backend/compare/v1.3.0...v2.0.0) (2026-03-29)
+
+### 🔥 Upgrade
+
+* **deps:** update @modelcontextprotocol/sdk to 1.28.0 and @supabase/supabase-js to 2.100.1 ([29a417f](https://github.com/natuleadan/mcp-backend/commit/29a417fd09649aef339b03d900e56cf63973d2d7))
+
+### ♻️ Refactoring
+
+* **storage:** add folder discovery and extension filtering to bulk uploads ([8d5b0b1](https://github.com/natuleadan/mcp-backend/commit/8d5b0b1f06ea58225e176cb4de3ad71ee147defb))
+
 ## [1.3.0](https://github.com/natuleadan/mcp-backend/compare/v1.2.0...v1.3.0) (2026-03-28)
 
 ### ✨ Features
