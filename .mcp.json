@@ -3,8 +3,22 @@
     "mcp-backend": {
       "type": "stdio",
       "command": "pnpm",
-      "args": ["--dir", "/absolute/path/to/mcp-backend", "start"],
-      "env": {}
+      "args": ["--dir", "${WORKSPACE_DIR}/mcp-backend", "start"],
+      "env": {},
+      "platforms": {
+        "darwin": {
+          "command": "pnpm",
+          "args": ["--dir", "${WORKSPACE_DIR}/mcp-backend", "start"]
+        },
+        "linux": {
+          "command": "pnpm",
+          "args": ["--dir", "${WORKSPACE_DIR}/mcp-backend", "start"]
+        },
+        "win32": {
+          "command": "pnpm.cmd",
+          "args": ["--dir", "${WORKSPACE_DIR}\\mcp-backend", "start"]
+        }
+      }
     }
   }
 }
