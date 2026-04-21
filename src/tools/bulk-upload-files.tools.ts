@@ -35,15 +35,21 @@ export function registerBulkUploadFilesTool(server: McpServer) {
           })
         )
         .optional()
-        .describe('Array of files: [{local_path, storage_path}, ...]. Either files or folder_path required.'),
+        .describe(
+          'Array of files: [{local_path, storage_path}, ...]. Either files or folder_path required.'
+        ),
       folder_path: z
         .string()
         .optional()
-        .describe('Local folder path to upload (absolute or relative to buckets/{bucket}). Discovers files recursively.'),
+        .describe(
+          'Local folder path to upload (absolute or relative to buckets/{bucket}). Discovers files recursively.'
+        ),
       storage_prefix: z
         .string()
         .optional()
-        .describe('Optional prefix for storage paths when uploading from folder (e.g., "products/" prepends to all files)'),
+        .describe(
+          'Optional prefix for storage paths when uploading from folder (e.g., "products/" prepends to all files)'
+        ),
       ignore_extensions: z
         .array(z.string())
         .optional()
@@ -120,7 +126,10 @@ export function registerBulkUploadFilesTool(server: McpServer) {
             } else if (entry.isFile()) {
               // Check if file should be ignored
               if (shouldIgnore(entry.name)) {
-                results.push({ file: `${basePrefix}${entry.name}`, status: `⏭️  Skipped (ignored extension)` })
+                results.push({
+                  file: `${basePrefix}${entry.name}`,
+                  status: `⏭️  Skipped (ignored extension)`,
+                })
                 continue
               }
 
