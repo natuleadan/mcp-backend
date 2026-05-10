@@ -3,33 +3,33 @@
 </p>
 
 <h1 align="center">mcp-backend</h1>
-<p align="center"><strong>MCP server with full backend access — PostgreSQL, Supabase Storage, Iceberg and seeds</strong></p>
+<p align="center"><strong>MCP server with full backend access — PostgreSQL, Storage (Supabase or S3), Iceberg and seeds</strong></p>
 
 <p align="center">
   <a href="https://github.com/natuleadan/mcp-backend/releases"><img src="https://img.shields.io/github/v/release/natuleadan/mcp-backend?include_prereleases&style=for-the-badge" alt="GitHub release" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License" /></a>
   <img src="https://img.shields.io/badge/PostgreSQL-direct-blue?style=for-the-badge" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/Supabase-storage-green?style=for-the-badge" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Storage-Supabase%20%7C%20S3-green?style=for-the-badge" alt="Storage" />
   <img src="https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge" alt="In Development" />
-  <img src="https://img.shields.io/badge/Tools-31-blue?style=for-the-badge" alt="31 Tools" />
+  <img src="https://img.shields.io/badge/Tools-32-blue?style=for-the-badge" alt="32 Tools" />
 </p>
 
 > ⚠️ **Active Development** — APIs and tools may change without prior notice. Use tagged releases (`vX.Y.Z`) for stability.
 
 ---
 
-Local MCP server compatible with any studio-based AI client. Provides direct PostgreSQL access, Supabase Storage operations, Iceberg catalog queries and SQL seed management for the nla-fullstack backend.
+Local MCP server compatible with any studio-based AI client. Provides direct PostgreSQL access, storage operations (Supabase or S3), Iceberg catalog queries and SQL seed management.
 
 ## Stack
 
 - **Database**: PostgreSQL via `pg` (direct connection)
-- **Storage**: Supabase Storage (buckets + signed URLs)
+- **Storage**: Supabase Storage or S3-compatible (MinIO, RustFS, SeaweedFS, AWS)
 - **Data Lake**: Apache Iceberg REST Catalog
 - **Protocol**: MCP over stdio
 
 ---
 
-## Tools (31 Total)
+## Tools (32 Total)
 
 ### Database (5)
 
@@ -38,7 +38,7 @@ Local MCP server compatible with any studio-based AI client. Provides direct Pos
 | `query_db` | Run SELECT queries on PostgreSQL |
 | `execute_sql` | Execute arbitrary SQL (INSERT/UPDATE/DELETE) with transaction support |
 | `execute_sql_file` | Execute SQL file content (PL/pgSQL blocks, multi-statement scripts) with transaction support |
-| `execute_rls_sql` | Execute SQL with RLS context (impersonate user role) |
+| `execute_rls_sql` | Execute SQL with RLS context (impersonate user role — supabase mode only) |
 | `list_tables` | List all public tables |
 
 ### Seeds (4)
@@ -50,18 +50,19 @@ Local MCP server compatible with any studio-based AI client. Provides direct Pos
 | `run_data_seed` | Run data seed files (users, products, courses, articles) |
 | `run_all_seeds` | Run base + data seeds in order |
 
-### Storage (10)
+### Storage (11)
 
 | Tool | Description |
 |------|-------------|
-| `list_buckets` | List all Supabase storage buckets |
+| `list_buckets` | List all storage buckets |
 | `list_files` | List files in a bucket with pagination |
 | `get_signed_url` | Generate a signed URL for a file (private buckets) |
 | `get_public_url` | Get the public URL for a file (public buckets) |
 | `upload_file` | Upload a file to a bucket with MIME type detection |
 | `delete_file` | Delete a file from a bucket |
-| `download_bucket` | Download files from Supabase storage to local buckets/ folder (all buckets, one bucket, specific folder, or single file) |
+| `download_bucket` | Download files from storage to local buckets/ folder (all buckets, one bucket, specific folder, or single file) |
 | `bulk_upload_files` | Upload multiple files or entire folder with selective file extension filtering (e.g., ignore `.sql`, `.tmp`) and optional storage prefix |
+| `manage_bucket` | Create, update, empty or delete a storage bucket |
 | `generate_and_update_signed_url` | Generate signed URL and atomically update DB table with URL + expiration timestamp |
 
 ### Iceberg (3)
@@ -132,10 +133,16 @@ Run order: `base/` always before `data/`.
 
 | Variable | Description |
 |----------|-------------|
+| `BACKEND_MODE` | `supabase` (full) or `postgres` (DB + S3 storage) |
 | `POSTGRES_URL` | PostgreSQL connection string |
-| `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_PUBLISHABLE_KEY` | Supabase anon/publishable key |
-| `SUPABASE_SECRET_KEY` | Supabase service role key |
+| `SUPABASE_URL` | Supabase project URL (required in supabase mode) |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase anon/publishable key (supabase mode) |
+| `SUPABASE_SECRET_KEY` | Supabase service role key (supabase mode) |
+| `STORAGE_ENDPOINT_URL` | S3-compatible endpoint (required in postgres mode) |
+| `STORAGE_ACCESS_KEY_ID` | S3 access key (postgres mode) |
+| `STORAGE_SECRET_ACCESS_KEY` | S3 secret key (postgres mode) |
+| `STORAGE_BUCKET` | Default S3 bucket name (postgres mode) |
+| `STORAGE_REGION` | S3 region (default: `us-east-1`) |
 | `CATALOG_URI` | Iceberg REST Catalog URI |
 | `ICEBERG_TOKEN` | Bearer token for Iceberg catalog |
 | `ICEBERG_WAREHOUSE` | Iceberg warehouse name |

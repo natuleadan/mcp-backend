@@ -8,7 +8,7 @@ How to connect `mcp-backend` to different AI clients as an MCP server.
 
 - **Node.js 18+** and **pnpm**
 - A running **PostgreSQL** instance (or Supabase project)
-- **Supabase** project with storage enabled (for storage tools)
+- **Supabase** project with storage enabled (for supabase mode) **or** S3-compatible storage (for postgres mode)
 
 ### macOS
 ```bash
@@ -50,10 +50,19 @@ cp .env.example .env
 Edit `.env` with your credentials:
 
 ```env
+# Supabase mode (default) — full storage + RPC + RLS
+BACKEND_MODE=supabase
 POSTGRES_URL=postgres://user:password@host:5432/database
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 SUPABASE_SECRET_KEY=sb_secret_...
+
+# Or postgres mode — DB + S3-compatible storage
+# BACKEND_MODE=postgres
+# STORAGE_ENDPOINT_URL=http://localhost:3200
+# STORAGE_ACCESS_KEY_ID=admin
+# STORAGE_SECRET_ACCESS_KEY=secret
+# STORAGE_BUCKET=mybucket
 
 # Optional — only needed for Iceberg tools
 CATALOG_URI=https://your-project.storage.supabase.co/storage/v1/iceberg
@@ -65,7 +74,7 @@ AWS_SECRET_ACCESS_KEY=your-s3-secret-key
 S3_ENDPOINT=https://your-project.storage.supabase.co/storage/v1/s3
 ```
 
-> All credentials must match your Supabase project. `POSTGRES_URL` is required for all DB tools.
+> `POSTGRES_URL` is required in both modes. In `supabase` mode, `SUPABASE_*` vars are also required.
 
 ---
 
@@ -235,5 +244,6 @@ which pnpm   # use the full path as the command value
 **Iceberg queries time out:**
 The FDW scan can be slow on first access. Default timeout is 30s. If your data lake is cold, retry after a few seconds.
 
-**Storage tools return 401:**
-Check that `SUPABASE_SECRET_KEY` (service role) is correct and the bucket exists in your Supabase project.
+**Storage tools fail:**
+- **Supabase mode**: Check `SUPABASE_SECRET_KEY` (service role) and bucket existence.
+- **Postgres mode**: Verify `STORAGE_ENDPOINT_URL`, `STORAGE_ACCESS_KEY_ID` and `STORAGE_SECRET_ACCESS_KEY` are correct for your S3-compatible server.
