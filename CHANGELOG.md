@@ -76,7 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🔧 Chore
 
-* **config:** update gitignore, remove *.env.local, add .ds_store ([6662c87](https://github.com/natuleadan/mcp-backend/commit/6662c87809c78810760fc1b9518ce6eb2b438fb5))
+* **config:** update gitignore, remove *.env, add .ds_store ([6662c87](https://github.com/natuleadan/mcp-backend/commit/6662c87809c78810760fc1b9518ce6eb2b438fb5))
 
 ## 1.0.0 (2026-03-22)
 
