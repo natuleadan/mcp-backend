@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0](https://github.com/natuleadan/mcp-backend/compare/v2.0.1...v2.1.0) (2026-05-10)
+
+### ✨ Features
+
+* **config:** add backend mode, s3 storage, bucket crud, and unified rpc ([9de3531](https://github.com/natuleadan/mcp-backend/commit/9de3531ae117ab1413fb1547c819b170cd41373b))
+
+### 🐛 Bug Fixes
+
+* **config:** explicitly set rootDir in tsconfig.json ([92afcbd](https://github.com/natuleadan/mcp-backend/commit/92afcbd998e736480c140f2191d0ada4dcb1b07a))
+* **config:** use environment variable for workspace path and add platform-specific configurations ([612c8f2](https://github.com/natuleadan/mcp-backend/commit/612c8f2f0876dd81c333b7b3a06c5c3e7ca67540))
+* **format:** improve line wrapping for tool descriptions ([1dfc639](https://github.com/natuleadan/mcp-backend/commit/1dfc639d97630b3f754457c202123344f9119c8c))
+* **tools:** resolve sql bugs in column_stats and index_info queries ([fc64eb4](https://github.com/natuleadan/mcp-backend/commit/fc64eb41b3325d97c7164bd0d6c8dc65f8a47c1e))
+
+### 📖 Documentation
+
+* update readme and install with multi-mode and tool count ([1e97db2](https://github.com/natuleadan/mcp-backend/commit/1e97db23f87120d43bb14390e90fdf5946d659d9))
+
+### 🔧 Chore
+
+* **config:** rename .mcp.json to .mcp.json.example — not for direct use ([f82cb82](https://github.com/natuleadan/mcp-backend/commit/f82cb82fba681e422500eda2246628a4e3e294dd))
+* **repo:** update changelog and lockfile ([43a5453](https://github.com/natuleadan/mcp-backend/commit/43a545352b29dee0bb00b753410c8ec80f8c82d9))
+
 ## [2.0.1](https://github.com/natuleadan/mcp-backend/compare/v2.0.0...v2.0.1) (2026-03-29)
 
 ### 🐛 Bug Fixes
