@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { getSupabase } from '../supabase.js'
+import { callRpc } from '../rpc.js'
 
 export function registerCallRpcTool(server: McpServer) {
   server.tool(
@@ -15,10 +15,8 @@ export function registerCallRpcTool(server: McpServer) {
     },
     async ({ fn, args }: { fn: string; args?: Record<string, unknown> | string }) => {
       try {
-        const supabase = getSupabase()
         const resolvedArgs = typeof args === 'string' ? JSON.parse(args) : (args ?? {})
-        const { data, error } = await supabase.rpc(fn, resolvedArgs)
-        if (error) throw new Error(error.message)
+        const data = await callRpc(fn, resolvedArgs as Record<string, unknown>)
         return {
           content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
         }

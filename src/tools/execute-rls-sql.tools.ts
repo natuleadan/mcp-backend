@@ -5,7 +5,7 @@ import { getClient } from '../db.js'
 export function registerExecuteRlsSqlTool(server: McpServer) {
   server.tool(
     'execute_rls_sql',
-    'Run a SELECT query impersonating a user role (applies RLS). Useful to test what a role can see.',
+    'Run a SELECT query impersonating a user role (applies RLS). Useful to test what a role can see. Only available in supabase mode.',
     z.object({
       sql: z.string().describe('SQL SELECT query'),
       role: z
@@ -37,7 +37,6 @@ export function registerExecuteRlsSqlTool(server: McpServer) {
             isError: true,
           }
         }
-        // Validate user_id format if provided (UUID)
         if (
           user_id &&
           !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user_id)
@@ -54,10 +53,8 @@ export function registerExecuteRlsSqlTool(server: McpServer) {
         }
         const client = await getClient()
         try {
-          // role is safe (enum-validated by zod)
           await client.query(`SET LOCAL role = '${role}'`)
           if (user_id) {
-            // user_id validated as UUID format above
             await client.query(`SET LOCAL request.jwt.claim.sub = '${user_id}'`)
           }
           const result = await client.query(sql, params ?? [])

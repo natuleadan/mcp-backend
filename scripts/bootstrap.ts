@@ -79,13 +79,23 @@ function parseEnv(content: string): Record<string, string> {
 
 function serializeEnv(vars: Record<string, string>): string {
   return [
+    '# Backend mode: "supabase" (full) or "postgres" (DB + S3-compatible storage)',
+    `BACKEND_MODE=${vars.BACKEND_MODE || 'supabase'}`,
+    '',
     '# PostgreSQL direct connection',
     `POSTGRES_URL=${vars.POSTGRES_URL ?? ''}`,
     '',
-    '# Supabase REST API',
+    '# Supabase REST API (required for supabase mode — storage + rpc + rls)',
     `SUPABASE_URL=${vars.SUPABASE_URL ?? ''}`,
     `SUPABASE_PUBLISHABLE_KEY=${vars.SUPABASE_PUBLISHABLE_KEY ?? ''}`,
     `SUPABASE_SECRET_KEY=${vars.SUPABASE_SECRET_KEY ?? ''}`,
+    '',
+    '# S3-compatible storage (required for postgres mode — RustFS, MinIO, SeaweedFS, AWS)',
+    `STORAGE_ENDPOINT_URL=${vars.STORAGE_ENDPOINT_URL ?? ''}`,
+    `STORAGE_ACCESS_KEY_ID=${vars.STORAGE_ACCESS_KEY_ID ?? ''}`,
+    `STORAGE_SECRET_ACCESS_KEY=${vars.STORAGE_SECRET_ACCESS_KEY ?? ''}`,
+    `STORAGE_BUCKET=${vars.STORAGE_BUCKET ?? ''}`,
+    `STORAGE_REGION=${vars.STORAGE_REGION || 'us-east-1'}`,
     '',
     '# Iceberg / Data Lake (optional)',
     `CATALOG_URI=${vars.CATALOG_URI ?? ''}`,
@@ -167,13 +177,24 @@ async function main() {
 
     const rl = createInterface({ input: process.stdin, output: process.stdout })
 
-    section('PostgreSQL')
-    vars.POSTGRES_URL = await prompt(rl, 'POSTGRES_URL', 'postgresql://postgres:PASSWORD@db.SUPABASEID.supabase.co:5432/postgres')
+    section('Mode')
+    vars.BACKEND_MODE = await prompt(rl, 'BACKEND_MODE (supabase | postgres)', 'supabase')
 
-    section('Supabase')
-    vars.SUPABASE_URL = await prompt(rl, 'SUPABASE_URL', 'https://SUPABASEID.supabase.co')
-    vars.SUPABASE_PUBLISHABLE_KEY = await prompt(rl, 'SUPABASE_PUBLISHABLE_KEY')
-    vars.SUPABASE_SECRET_KEY = await prompt(rl, 'SUPABASE_SECRET_KEY')
+    section('PostgreSQL')
+    vars.POSTGRES_URL = await prompt(rl, 'POSTGRES_URL', 'postgresql://postgres:PASSWORD@host:5432/database')
+
+    if (vars.BACKEND_MODE === 'supabase') {
+      section('Supabase')
+      vars.SUPABASE_URL = await prompt(rl, 'SUPABASE_URL', 'https://SUPABASEID.supabase.co')
+      vars.SUPABASE_PUBLISHABLE_KEY = await prompt(rl, 'SUPABASE_PUBLISHABLE_KEY')
+      vars.SUPABASE_SECRET_KEY = await prompt(rl, 'SUPABASE_SECRET_KEY')
+    } else {
+      section('S3-compatible storage')
+      vars.STORAGE_ENDPOINT_URL = await prompt(rl, 'STORAGE_ENDPOINT_URL', 'http://localhost:3200')
+      vars.STORAGE_ACCESS_KEY_ID = await prompt(rl, 'STORAGE_ACCESS_KEY_ID')
+      vars.STORAGE_SECRET_ACCESS_KEY = await prompt(rl, 'STORAGE_SECRET_ACCESS_KEY')
+      vars.STORAGE_BUCKET = await prompt(rl, 'STORAGE_BUCKET')
+    }
 
     section('Iceberg / Data Lake (optional — press Enter to skip)')
     vars.CATALOG_URI = await prompt(rl, 'CATALOG_URI')
@@ -192,7 +213,11 @@ async function main() {
 
   // ── Validate required vars ─────────────────────────────────────────────────
   section('Validating required variables')
-  const required: Array<keyof typeof vars> = ['POSTGRES_URL', 'SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SECRET_KEY']
+  const required: Array<keyof typeof vars> = ['POSTGRES_URL']
+  const isSupabase = vars.BACKEND_MODE !== 'postgres'
+  if (isSupabase) {
+    required.push('SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SECRET_KEY')
+  }
   let missing = false
   for (const key of required) {
     if (!vars[key]) {
@@ -207,7 +232,9 @@ async function main() {
   // ── Test connections ───────────────────────────────────────────────────────
   section('Testing connections')
   await checkPostgres(vars.POSTGRES_URL)
-  await checkSupabase(vars.SUPABASE_URL, vars.SUPABASE_SECRET_KEY)
+  if (isSupabase) {
+    await checkSupabase(vars.SUPABASE_URL, vars.SUPABASE_SECRET_KEY)
+  }
   await checkIceberg(vars.CATALOG_URI ?? '', vars.CATALOG_TOKEN ?? '', vars.ICEBERG_WAREHOUSE ?? '')
 
   log('🎉 Bootstrap complete.\n   pnpm start     → start the MCP server\n   pnpm db:all    → run DB migrations')

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { getSupabase } from '../supabase.js'
+import { getStorage } from '../storage.js'
 import { config } from '../config.js'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -33,35 +33,30 @@ export function registerDownloadBucketTool(server: McpServer) {
       limit: number
     }) => {
       try {
-        const supabase = getSupabase()
+        const storage = getStorage()
         const results: string[] = []
 
         async function downloadFile(bkt: string, filePath: string) {
-          const { data, error } = await supabase.storage.from(bkt).download(filePath)
-          if (error) {
-            results.push(`❌ ${bkt}/${filePath}: ${error.message}`)
-            return
+          try {
+            const buffer = await storage.downloadFile(bkt, filePath)
+            const localPath = path.join(config.bucketsDir, bkt, filePath)
+            fs.mkdirSync(path.dirname(localPath), { recursive: true })
+            fs.writeFileSync(localPath, buffer)
+            results.push(`✅ ${bkt}/${filePath}`)
+          } catch (err) {
+            results.push(`❌ ${bkt}/${filePath}: ${err instanceof Error ? err.message : String(err)}`)
           }
-          const localPath = path.join(config.bucketsDir, bkt, filePath)
-          fs.mkdirSync(path.dirname(localPath), { recursive: true })
-          const buffer = Buffer.from(await data.arrayBuffer())
-          fs.writeFileSync(localPath, buffer)
-          results.push(`✅ ${bkt}/${filePath}`)
         }
 
         async function downloadFolder(bkt: string, folderPath: string) {
-          const { data, error } = await supabase.storage.from(bkt).list(folderPath, { limit })
-          if (error) {
-            results.push(`❌ list ${bkt}/${folderPath}: ${error.message}`)
-            return
-          }
-          for (const item of data ?? []) {
-            const itemPath = folderPath ? `${folderPath}/${item.name}` : item.name
-            if (item.id === null) {
-              await downloadFolder(bkt, itemPath) // it's a folder
-            } else {
+          try {
+            const files = await storage.listFiles(bkt, folderPath, limit)
+            for (const item of files) {
+              const itemPath = folderPath ? `${folderPath}/${item.name}` : item.name
               await downloadFile(bkt, itemPath)
             }
+          } catch (err) {
+            results.push(`❌ list ${bkt}/${folderPath}: ${err instanceof Error ? err.message : String(err)}`)
           }
         }
 
@@ -70,15 +65,9 @@ export function registerDownloadBucketTool(server: McpServer) {
         } else if (bucket) {
           await downloadFolder(bucket, folder ?? '')
         } else {
-          const { data: buckets, error } = await supabase.storage.listBuckets()
-          if (error) {
-            return {
-              content: [{ type: 'text', text: `❌ ${error.message}` }],
-              isError: true,
-            }
-          }
-          for (const b of buckets ?? []) {
-            await downloadFolder(b.id, '')
+          const buckets = await storage.listBuckets()
+          for (const b of buckets) {
+            await downloadFolder(b.name, '')
           }
         }
 

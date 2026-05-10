@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { getSupabase } from '../supabase.js'
+import { getStorage } from '../storage.js'
 
 export function registerGetPublicUrlTool(server: McpServer) {
   server.tool(
@@ -12,10 +12,10 @@ export function registerGetPublicUrlTool(server: McpServer) {
     }).shape,
     async ({ bucket, path: filePath }: { bucket: string; path: string }) => {
       try {
-        const supabase = getSupabase()
-        const { data } = supabase.storage.from(bucket).getPublicUrl(filePath)
+        const storage = getStorage()
+        const publicUrl = storage.getPublicUrl(bucket, filePath)
         return {
-          content: [{ type: 'text', text: data.publicUrl }],
+          content: [{ type: 'text', text: publicUrl }],
         }
       } catch (err) {
         return {

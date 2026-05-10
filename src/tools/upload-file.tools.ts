@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { getSupabase } from '../supabase.js'
+import { getStorage } from '../storage.js'
 import { config } from '../config.js'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -23,7 +23,7 @@ const MIME_MAP: Record<string, string> = {
 export function registerUploadFileTool(server: McpServer) {
   server.tool(
     'upload_file',
-    'Upload any local file to a Supabase storage bucket. local_path can be absolute (/Users/...) or relative to buckets/{bucket}/',
+    'Upload any local file to a storage bucket. local_path can be absolute (/Users/...) or relative to buckets/{bucket}/',
     z.object({
       bucket: z.string().describe('Bucket name'),
       local_path: z
@@ -60,13 +60,10 @@ export function registerUploadFileTool(server: McpServer) {
         const fileBuffer = fs.readFileSync(fullPath)
         const ext = path.extname(fullPath).toLowerCase()
         const contentType = MIME_MAP[ext] ?? 'application/octet-stream'
-        const supabase = getSupabase()
-        const { data, error } = await supabase.storage
-          .from(bucket)
-          .upload(storage_path, fileBuffer, { contentType, upsert })
-        if (error) throw new Error(error.message)
+        const storage = getStorage()
+        const resultPath = await storage.uploadFile(bucket, storage_path, fileBuffer, contentType, upsert)
         return {
-          content: [{ type: 'text', text: `✅ Uploaded → ${bucket}/${data.path}` }],
+          content: [{ type: 'text', text: `✅ Uploaded → ${bucket}/${resultPath}` }],
         }
       } catch (err) {
         return {

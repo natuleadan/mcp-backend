@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { getSupabase } from '../supabase.js'
+import { getStorage } from '../storage.js'
 import { getClient } from '../db.js'
 
 export function registerGenerateAndUpdateSignedUrlTool(server: McpServer) {
@@ -47,13 +47,9 @@ export function registerGenerateAndUpdateSignedUrlTool(server: McpServer) {
       expires_at_column: string
     }) => {
       try {
-        // 1. Generate signed URL via Supabase Storage SDK
-        const supabase = getSupabase()
-        const { data, error } = await supabase.storage
-          .from(bucket)
-          .createSignedUrl(filePath, expires_in)
-        if (error) throw new Error(error.message)
-        const signedUrl = data.signedUrl
+        // 1. Generate signed URL via storage provider
+        const storage = getStorage()
+        const signedUrl = await storage.getSignedUrl(bucket, filePath, expires_in)
 
         // 2. Calculate expiration timestamp (NOW + expires_in seconds)
         const expiresAt = new Date(Date.now() + expires_in * 1000).toISOString()

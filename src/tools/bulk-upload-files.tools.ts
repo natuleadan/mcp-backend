@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { getSupabase } from '../supabase.js'
+import { getStorage } from '../storage.js'
 import { config } from '../config.js'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -24,7 +24,7 @@ const MIME_MAP: Record<string, string> = {
 export function registerBulkUploadFilesTool(server: McpServer) {
   server.tool(
     'bulk_upload_files',
-    'Upload multiple local files to Supabase storage with optional filtering by file type. Can upload individual files or an entire folder with selective file extensions.',
+    'Upload multiple local files to storage with optional filtering by file type. Can upload individual files or an entire folder with selective file extensions.',
     {
       bucket: z.string().describe('Supabase bucket name'),
       files: z
@@ -72,7 +72,7 @@ export function registerBulkUploadFilesTool(server: McpServer) {
       upsert: boolean
     }) => {
       try {
-        const supabase = getSupabase()
+        const storage = getStorage()
         const results: { file: string; status: string }[] = []
         const normalizedIgnoreExt = ignore_extensions.map((ext) =>
           ext.toLowerCase().startsWith('.') ? ext.toLowerCase() : `.${ext.toLowerCase()}`
@@ -96,14 +96,11 @@ export function registerBulkUploadFilesTool(server: McpServer) {
             const ext = path.extname(fullLocalPath).toLowerCase()
             const contentType = MIME_MAP[ext] ?? 'application/octet-stream'
 
-            const { error } = await supabase.storage
-              .from(bucket)
-              .upload(storagePath, fileBuffer, { contentType, upsert })
-
-            if (error) {
-              results.push({ file: storagePath, status: `❌ ${error.message}` })
-            } else {
+            try {
+              await storage.uploadFile(bucket, storagePath, fileBuffer, contentType, upsert)
               results.push({ file: storagePath, status: '✅ Uploaded' })
+            } catch (err) {
+              results.push({ file: storagePath, status: `❌ ${err instanceof Error ? err.message : String(err)}` })
             }
           } catch (err) {
             results.push({

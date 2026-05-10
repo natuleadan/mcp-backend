@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { getSupabase } from '../supabase.js'
+import { getStorage } from '../storage.js'
 
 export function registerGetSignedUrlTool(server: McpServer) {
   server.tool(
@@ -21,13 +21,10 @@ export function registerGetSignedUrlTool(server: McpServer) {
       expires_in: number
     }) => {
       try {
-        const supabase = getSupabase()
-        const { data, error } = await supabase.storage
-          .from(bucket)
-          .createSignedUrl(filePath, expires_in)
-        if (error) throw new Error(error.message)
+        const storage = getStorage()
+        const signedUrl = await storage.getSignedUrl(bucket, filePath, expires_in)
         return {
-          content: [{ type: 'text', text: data.signedUrl }],
+          content: [{ type: 'text', text: signedUrl }],
         }
       } catch (err) {
         return {

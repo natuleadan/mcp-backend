@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { getSupabase } from '../supabase.js'
+import { getStorage } from '../storage.js'
 
 export function registerListBucketsTool(server: McpServer) {
   server.tool(
@@ -9,22 +9,13 @@ export function registerListBucketsTool(server: McpServer) {
     z.object({}).shape,
     async () => {
       try {
-        const supabase = getSupabase()
-        const { data, error } = await supabase.storage.listBuckets()
-        if (error) throw new Error(error.message)
+        const storage = getStorage()
+        const data = await storage.listBuckets()
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(
-                data.map((b: { id: string; name: string; public: boolean }) => ({
-                  id: b.id,
-                  name: b.name,
-                  public: b.public,
-                })),
-                null,
-                2
-              ),
+              text: JSON.stringify(data, null, 2),
             },
           ],
         }

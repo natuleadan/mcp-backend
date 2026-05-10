@@ -11,6 +11,7 @@ const envPath = path.join(projectRoot, '.env')
 dotenv.config({ path: envPath, override: true })
 
 export const config = {
+  backendMode: (process.env.BACKEND_MODE || 'supabase') as 'supabase' | 'postgres',
   postgresUrl: process.env.POSTGRES_URL || process.env.DB_URL || '',
   supabaseUrl: process.env.SUPABASE_URL || '',
   supabasePublishableKey: process.env.SUPABASE_PUBLISHABLE_KEY || '',
@@ -27,6 +28,12 @@ export const config = {
   s3Endpoint: process.env.S3_ENDPOINT || '',
   icebergWarehouse: process.env.ICEBERG_WAREHOUSE || 'nla-audit-lake',
   icebergNamespace: process.env.ICEBERG_NAMESPACE || 'audit',
+  // S3-compatible storage (for postgres mode)
+  storageEndpointUrl: process.env.STORAGE_ENDPOINT_URL || '',
+  storageAccessKeyId: process.env.STORAGE_ACCESS_KEY_ID || '',
+  storageSecretAccessKey: process.env.STORAGE_SECRET_ACCESS_KEY || '',
+  storageBucket: process.env.STORAGE_BUCKET || '',
+  storageRegion: process.env.STORAGE_REGION || 'us-east-1',
   baseDir: path.resolve(__dirname, '../base'),
   dataDir: path.resolve(__dirname, '../data'),
   bucketsDir: path.resolve(__dirname, '../buckets'),

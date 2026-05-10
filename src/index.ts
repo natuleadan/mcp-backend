@@ -7,6 +7,7 @@ import { registerListSeedFilesTool } from './tools/list-seed-files.tools.js'
 import { registerQueryDbTool } from './tools/query-db.tools.js'
 import { registerListTablesTool } from './tools/list-tables.tools.js'
 import { registerExecuteSqlTool } from './tools/execute-sql.tools.js'
+import { config } from './config.js'
 import { registerExecuteRlsSqlTool } from './tools/execute-rls-sql.tools.js'
 import { registerListBucketsTool } from './tools/list-buckets.tools.js'
 import { registerListFilesTool } from './tools/list-files.tools.js'
@@ -30,6 +31,7 @@ import { registerBulkUploadFilesTool } from './tools/bulk-upload-files.tools.js'
 import { registerCallRpcTool } from './tools/call-rpc.tools.js'
 import { registerExecuteSqlFileTool } from './tools/execute-sql-file.tools.js'
 import { registerGenerateAndUpdateSignedUrlTool } from './tools/generate-and-update-signed-url.tools.js'
+import { registerManageBucketTool } from './tools/manage-bucket.tools.js'
 
 const server = new McpServer({
   name: 'mcp-backend',
@@ -44,7 +46,9 @@ registerListSeedFilesTool(server)
 registerQueryDbTool(server)
 registerListTablesTool(server)
 registerExecuteSqlTool(server)
-registerExecuteRlsSqlTool(server)
+if (config.backendMode === 'supabase') {
+  registerExecuteRlsSqlTool(server)
+}
 registerListBucketsTool(server)
 registerListFilesTool(server)
 registerUploadFileTool(server)
@@ -69,6 +73,7 @@ registerBulkUploadFilesTool(server)
 registerCallRpcTool(server)
 registerExecuteSqlFileTool(server)
 registerGenerateAndUpdateSignedUrlTool(server)
+registerManageBucketTool(server)
 
 const transport = new StdioServerTransport()
 await server.connect(transport)

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { getSupabase } from '../supabase.js'
+import { getStorage } from '../storage.js'
 
 export function registerListFilesTool(server: McpServer) {
   server.tool(
@@ -13,22 +13,13 @@ export function registerListFilesTool(server: McpServer) {
     }).shape,
     async ({ bucket, folder, limit }: { bucket: string; folder?: string; limit: number }) => {
       try {
-        const supabase = getSupabase()
-        const { data, error } = await supabase.storage.from(bucket).list(folder ?? '', { limit })
-        if (error) throw new Error(error.message)
+        const storage = getStorage()
+        const data = await storage.listFiles(bucket, folder, limit)
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(
-                data.map((f) => ({
-                  name: f.name,
-                  size: f.metadata?.size,
-                  updated: f.updated_at,
-                })),
-                null,
-                2
-              ),
+              text: JSON.stringify(data, null, 2),
             },
           ],
         }

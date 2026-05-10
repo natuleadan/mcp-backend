@@ -19,6 +19,7 @@
     "@supabase/supabase-js": "^2.100.1",
     "dotenv": "^16.6.1",
     "iceberg-js": "^0.8.1",
+"minio": "^8.0.5",
     "pg": "^8.20.0",
     "zod": "^3.25.76"
   },
