@@ -15,26 +15,33 @@ export function registerColumnStatsTool(server: McpServer) {
       try {
         const [schema, tableName] = table.includes('.') ? table.split('.') : ['public', table]
 
-        const result = await runQuery(`SELECT COUNT(*) as total_rows FROM ${schema}.${tableName}`)
-        const totalRows = (result[0] as Record<string, number>).total_rows
+        const totalRow = await runQuery<{ total_rows: number }>(`SELECT COUNT(*) as total_rows FROM ${schema}.${tableName}`)
+        const totalRows = totalRow[0].total_rows
 
-        let sql = `
-          SELECT
-            column_name,
-            COUNT(DISTINCT col_value) as distinct_count,
-            COUNT(CASE WHEN col_value IS NULL THEN 1 END) as null_count
-          FROM (
-            SELECT column_name, ${column ? `${column}::text` : "'constant'"} as col_value
-            FROM ${schema}.${tableName}
-            LIMIT $1
-          ) t
-        `
+        let stats: Record<string, unknown>[]
 
         if (column) {
-          sql += ` GROUP BY column_name`
+          stats = await runQuery(
+            `SELECT
+              $1 as column_name,
+              COUNT(DISTINCT "${column}") as distinct_count,
+              SUM(CASE WHEN "${column}" IS NULL THEN 1 ELSE 0 END) as null_count
+            FROM (SELECT "${column}" FROM ${schema}.${tableName} LIMIT $2) sub`,
+            [column, limit]
+          )
+        } else {
+          stats = await runQuery(
+            `SELECT
+              attname,
+              null_frac,
+              CASE WHEN n_distinct < 0 THEN ROUND((-n_distinct) * $1) ELSE n_distinct END as distinct_count,
+              CASE WHEN n_distinct < 0 THEN 'estimated' ELSE 'exact' END as distinct_type
+            FROM pg_stats
+            WHERE schemaname = $2 AND tablename = $3
+            ORDER BY attname`,
+            [totalRows, schema, tableName]
+          )
         }
-
-        const stats = await runQuery(sql, [limit])
 
         return {
           content: [
@@ -44,13 +51,19 @@ export function registerColumnStatsTool(server: McpServer) {
                 {
                   table: `${schema}.${tableName}`,
                   total_rows: totalRows,
-                  analyzed_rows: limit,
-                  stats: stats.map((s: Record<string, unknown>) => ({
-                    column: s.column_name,
-                    distinct_count: s.distinct_count,
-                    null_count: s.null_count,
-                    null_percentage: (((s.null_count as number) / limit) * 100).toFixed(2),
-                  })),
+                  stats: column
+                    ? stats.map((s: Record<string, unknown>) => ({
+                        column: s.column_name,
+                        distinct_count: s.distinct_count,
+                        null_count: s.null_count,
+                        null_percentage: totalRows > 0 ? (((s.null_count as number) / totalRows) * 100).toFixed(2) : '0.00',
+                      }))
+                    : stats.map((s: Record<string, unknown>) => ({
+                        column: s.attname,
+                        null_frac: s.null_frac,
+                        distinct_count: s.distinct_count,
+                        distinct_type: s.distinct_type,
+                      })),
                 },
                 null,
                 2

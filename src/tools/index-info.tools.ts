@@ -13,23 +13,23 @@ export function registerIndexInfoTool(server: McpServer) {
       try {
         let sql = `
           SELECT
-            schemaname,
-            tablename,
-            indexname,
-            pg_size_pretty(pg_relation_size(indexrelid)) as index_size,
-            idx_scan as scan_count
-          FROM pg_indexes
-          LEFT JOIN pg_stat_user_indexes ON indexrelname = indexname
-          WHERE schemaname NOT IN ('pg_catalog', 'information_schema')
+            pi.schemaname,
+            pi.tablename,
+            pi.indexname,
+            pg_size_pretty(pg_relation_size(psi.indexrelid)) as index_size,
+            COALESCE(psi.idx_scan, 0) as scan_count
+          FROM pg_indexes pi
+          LEFT JOIN pg_stat_user_indexes psi ON psi.indexrelname = pi.indexname
+          WHERE pi.schemaname NOT IN ('pg_catalog', 'information_schema')
         `
 
         const params: unknown[] = []
         if (table) {
-          sql += ' AND tablename = $1'
+          sql += ' AND pi.tablename = $1'
           params.push(table)
         }
 
-        sql += ' ORDER BY pg_relation_size(indexrelid) DESC'
+        sql += ' ORDER BY pg_relation_size(psi.indexrelid) DESC NULLS LAST'
 
         const rows = await runQuery(sql, params)
 
